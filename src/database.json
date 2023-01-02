@@ -1,0 +1,16 @@
+{
+    "collections": [
+        {
+            "id": "1",
+            "title": "January",
+            "created_at": "some date string",
+            "photos": []
+        },
+        {
+            "id": "2",
+            "title": "September",
+            "created_at": "idk",
+            "photos": []
+        }
+    ]
+}
