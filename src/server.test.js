@@ -2,7 +2,7 @@
 
 const request = require('supertest');
 const app = require('./server');
-const { describe, test } = require('@jest/globals');
+const { describe, test, expect } = require('@jest/globals');
 
 describe('Test the main page', () => {
     test('GET / succeeds', () => {
@@ -24,6 +24,17 @@ describe('Test collections', () => {
             .send({ name: 'Test', id: 'test' })
             .expect('Content-Type', /json/)
             .expect(200);
+    });
+
+    test('GET /collections/id succeeds in selecting a single collection', async () => {
+        return request(app)
+            .get('/api/collections/test')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body.name).toBe('Test');
+                expect(res.body.id).toBe('test');
+            });
     });
 
     test('DELETE /collections succeeds in deleting a collection', async () => {
