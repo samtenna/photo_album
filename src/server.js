@@ -1,4 +1,5 @@
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 const fs = require('fs').promises;
 
 const express = require('express');
@@ -40,7 +41,7 @@ app.get('/api/collections/:id', async (req, res) => {
     const file = await fs.readFile(DB_PATH);
     const data = await JSON.parse(file);
 
-    let collection = null;
+    let collection;
     data.collections.forEach((c) => {
       if (c.id === id) {
         collection = c;
@@ -54,6 +55,31 @@ app.get('/api/collections/:id', async (req, res) => {
     return res.json(collection);
   } catch (e) {
     console.log(`Error reading from database: ${e}`);
+    return res.sendStatus(500);
+  }
+});
+
+// POST create a new collection
+app.post('/api/collections/', async (req, res) => {
+  try {
+    const name = req.body.name;
+
+    const newCollection = {
+      id: uuidv4(),
+      name,
+      photos: []
+    };
+
+    const file = await fs.readFile(DB_PATH);
+    const data = await JSON.parse(file);
+
+    data.collections.push(newCollection);
+
+    await fs.writeFile(DB_PATH, await JSON.stringify(data));
+
+    return res.json(newCollection);
+  } catch (e) {
+    console.log(`Error writing to database: ${e}`);
     return res.sendStatus(500);
   }
 });

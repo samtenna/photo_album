@@ -1,9 +1,28 @@
+// Uses snippets from documentation at: https://github.com/ladjs/supertest
+
 const request = require('supertest');
 const app = require('./server');
 const { describe, test } = require('@jest/globals');
 
-describe('Test the home page', () => {
+describe('Test the main page', () => {
     test('GET / succeeds', () => {
         return request(app).get('/').expect(200);
+    });
+});
+
+describe('Test collections', () => {
+    test('GET /collections succeeds', async () => {
+        return request(app)
+            .get('/api/collections')
+            .expect(200)
+            .expect('Content-Type', /json/);
+    });
+
+    test('POST /collections succeeds creating a new collection', async () => {
+        return request(app)
+            .post('/api/collections')
+            .send({ name: 'Test' })
+            .expect('Content-Type', /json/)
+            .expect(200);
     });
 });

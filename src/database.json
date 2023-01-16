@@ -1,16 +1,1 @@
-{
-    "collections": [
-        {
-            "id": "1",
-            "title": "January",
-            "created_at": "some date string",
-            "photos": []
-        },
-        {
-            "id": "2",
-            "title": "September",
-            "created_at": "idk",
-            "photos": []
-        }
-    ]
-}
+{"collections":[{"id":"9eb2c795-0ae2-40a9-9b77-df3e89d00223","name":"Test","photos":[]},{"id":"73cac2ff-c8b7-4337-b6b5-792124a89331","name":"Test","photos":[]}]}
