@@ -21,8 +21,14 @@ describe('Test collections', () => {
     test('POST /collections succeeds creating a new collection', async () => {
         return request(app)
             .post('/api/collections')
-            .send({ name: 'Test' })
+            .send({ name: 'Test', id: 'test' })
             .expect('Content-Type', /json/)
+            .expect(200);
+    });
+
+    test('DELETE /collections succeeds in deleting a collection', async () => {
+        return request(app)
+            .delete('/api/collections/test')
             .expect(200);
     });
 });

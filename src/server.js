@@ -63,9 +63,10 @@ app.get('/api/collections/:id', async (req, res) => {
 app.post('/api/collections/', async (req, res) => {
   try {
     const name = req.body.name;
+    const id = req.body.id ?? uuidv4();
 
     const newCollection = {
-      id: uuidv4(),
+      id,
       name,
       photos: []
     };
@@ -78,6 +79,36 @@ app.post('/api/collections/', async (req, res) => {
     await fs.writeFile(DB_PATH, await JSON.stringify(data));
 
     return res.json(newCollection);
+  } catch (e) {
+    console.log(`Error writing to database: ${e}`);
+    return res.sendStatus(500);
+  }
+});
+
+// DELETE delete an existing collection
+app.delete('/api/collections/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const file = await fs.readFile(DB_PATH);
+    const data = await JSON.parse(file);
+
+    let found = false;
+    data.collections = data.collections.filter((collection) => {
+      if (collection.id === id) {
+        found = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    if (!found) {
+      return res.sendStatus(404);
+    }
+
+    // write back
+    await fs.writeFile(DB_PATH, await JSON.stringify(data));
+    return res.sendStatus(200);
   } catch (e) {
     console.log(`Error writing to database: ${e}`);
     return res.sendStatus(500);
