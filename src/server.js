@@ -105,6 +105,9 @@ app.delete('/api/collections/:id', async (req, res) => {
       return res.sendStatus(404);
     }
 
+    // delete photos belonging to the collection
+    data.photos = data.photos.filter((photo) => photo.collectionId !== id);
+
     // write back
     await fs.writeFile(DB_PATH, await JSON.stringify(data));
     return res.sendStatus(200);
