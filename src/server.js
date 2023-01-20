@@ -67,8 +67,7 @@ app.post('/api/collections/', async (req, res) => {
 
     const newCollection = {
       id,
-      name,
-      photos: []
+      name
     };
 
     const file = await fs.readFile(DB_PATH);
@@ -116,5 +115,75 @@ app.delete('/api/collections/:id', async (req, res) => {
 });
 
 // Images
+
+// POST create a new photo
+app.post('/api/collections/:collectionId/photos', async (req, res) => {
+  try {
+    const url = req.body.url;
+    const collectionId = req.params.collectionId;
+
+    const file = await fs.readFile(DB_PATH);
+    const data = await JSON.parse(file);
+
+    const photoId = req.body.id ?? uuidv4();
+
+    const newPhoto = {
+      id: photoId,
+      collectionId,
+      url
+    };
+
+    data.photos.push(newPhoto);
+
+    await fs.writeFile(DB_PATH, await JSON.stringify(data));
+
+    return res.json(newPhoto);
+  } catch (e) {
+    console.log(`Error writing to database: ${e}`);
+    return res.sendStatus(500);
+  }
+});
+
+// GET fetch photos of a collection
+app.get('/api/collections/:collectionId/photos', async (req, res) => {
+  try {
+    const collectionId = req.params.collectionId;
+    const file = await fs.readFile(DB_PATH);
+    const data = await JSON.parse(file);
+
+    data.photos = data.photos.filter((photo) => photo.collectionId === collectionId);
+
+    return res.json(data.photos);
+  } catch (e) {
+    console.log(`Error reading from database: ${e}`);
+    return res.sendStatus(500);
+  }
+});
+
+// GET fetch single photo
+app.get('/api/collections/:collectionId/photos/:photoId', async (req, res) => {
+  try {
+    const collectionId = req.params.collectionId;
+    const photoId = req.params.photoId;
+    const file = await fs.readFile(DB_PATH);
+    const data = await JSON.parse(file);
+
+    let photo;
+    data.photos.forEach((p) => {
+      if (p.id === photoId && p.collectionId === collectionId) {
+        photo = p;
+      }
+    });
+
+    if (photo === undefined) {
+      return res.sendStatus(404);
+    }
+
+    return res.json(photo);
+  } catch (e) {
+    console.log(`Error reading from database: ${e}`);
+    return res.sendStatus(500);
+  }
+});
 
 module.exports = app;

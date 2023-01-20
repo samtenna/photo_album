@@ -10,7 +10,7 @@ describe('Test the main page', () => {
     });
 });
 
-describe('Test collections', () => {
+describe('Test collections and photos', () => {
     test('GET /collections succeeds', async () => {
         return request(app)
             .get('/api/collections')
@@ -24,6 +24,34 @@ describe('Test collections', () => {
             .send({ name: 'Test', id: 'test' })
             .expect('Content-Type', /json/)
             .expect(200);
+    });
+
+    test('POST /collections/id/photos succeeds in creating a new photo', async () => {
+        return request(app)
+            .post('/api/collections/test/photos')
+            .send({ url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba', id: 'test' })
+            .expect('Content-Type', /json/)
+            .expect(200);
+    });
+
+    test('GET /collections/id/photos succeeds in fetching all photos', async () => {
+        return request(app)
+            .get('/api/collections/test/photos')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body.length).toBe(1);
+            });
+    });
+
+    test('GET /collections/id/photos/id succeeds in fetching a single photo', async () => {
+        return request(app)
+            .get('/api/collections/test/photos/test')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body.id).toBe('test');
+            });
     });
 
     test('GET /collections/id succeeds in selecting a single collection', async () => {
