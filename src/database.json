@@ -1,1 +1,6 @@
-{"collections":[],"photos":[]}
+{"collections":[
+    {
+        "id": "collection_one",
+        "name": "One"
+    }
+],"photos":[]}

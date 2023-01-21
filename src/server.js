@@ -14,6 +14,8 @@ app.get('/', (_, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
+app.use('/static', express.static(path.join(__dirname, '/static')));
+
 // API
 
 app.get('/api/health', (_, res) => {
@@ -30,7 +32,7 @@ app.get('/api/collections', async (_, res) => {
     return res.json(data.collections);
   } catch (e) {
     console.log(`Error reading from database: ${e}`);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
@@ -55,7 +57,7 @@ app.get('/api/collections/:id', async (req, res) => {
     return res.json(collection);
   } catch (e) {
     console.log(`Error reading from database: ${e}`);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
@@ -80,7 +82,7 @@ app.post('/api/collections/', async (req, res) => {
     return res.json(newCollection);
   } catch (e) {
     console.log(`Error writing to database: ${e}`);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
@@ -113,7 +115,7 @@ app.delete('/api/collections/:id', async (req, res) => {
     return res.sendStatus(200);
   } catch (e) {
     console.log(`Error writing to database: ${e}`);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
@@ -143,7 +145,7 @@ app.post('/api/collections/:collectionId/photos', async (req, res) => {
     return res.json(newPhoto);
   } catch (e) {
     console.log(`Error writing to database: ${e}`);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
@@ -159,7 +161,7 @@ app.get('/api/collections/:collectionId/photos', async (req, res) => {
     return res.json(data.photos);
   } catch (e) {
     console.log(`Error reading from database: ${e}`);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
@@ -185,7 +187,7 @@ app.get('/api/collections/:collectionId/photos/:photoId', async (req, res) => {
     return res.json(photo);
   } catch (e) {
     console.log(`Error reading from database: ${e}`);
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
