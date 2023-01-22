@@ -250,4 +250,34 @@ app.put('/api/photos/:photoId', async (req, res) => {
   }
 });
 
+// DELETE delete a photo
+app.delete('/api/photos/:photoId', async (req, res) => {
+  try {
+    const photoId = req.params.photoId;
+
+    const file = await fs.readFile(DB_PATH);
+    const data = JSON.parse(file);
+
+    let found = false;
+    data.photos.filter((p) => {
+      if (p.id === photoId) {
+        found = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    if (!found) {
+      return res.sendStatus(404);
+    }
+
+    await fs.writeFile(DB_PATH, JSON.stringify(data));
+    return res.sendStatus(200);
+  } catch (e) {
+    console.log(`Error writing to database: ${e}`);
+    return res.sendStatus(400);
+  }
+});
+
 module.exports = app;

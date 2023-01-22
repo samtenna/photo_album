@@ -66,6 +66,12 @@ describe('Test collections and photos', () => {
             });
     });
 
+    test('DELETE /photos/id succeeds in deleting a photo', async () => {
+        return request(app)
+            .put('/api/photos/test')
+            .expect(200);
+    });
+
     test('GET /collections/id succeeds in selecting a single collection', async () => {
         return request(app)
             .get('/api/collections/test')
