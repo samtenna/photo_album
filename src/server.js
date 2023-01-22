@@ -64,6 +64,7 @@ app.get('/api/collections/:id', async (req, res) => {
 // POST create a new collection
 app.post('/api/collections/', async (req, res) => {
   try {
+    console.log(req.body);
     const name = req.body.name;
     const id = req.body.id ?? uuidv4();
 
