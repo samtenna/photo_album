@@ -65,6 +65,18 @@ function paintCollection (collection) {
     newPhotoButton.textContent = 'New Photo';
     collectionWrapper.appendChild(newPhotoButton);
 
+    const deleteCollectionButton = document.createElement('button');
+    deleteCollectionButton.className = 'bg-red-500 text-white text-xl px-4 py-2 rounded';
+    deleteCollectionButton.textContent = 'Delete Collection';
+
+    deleteCollectionButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        deleteCollection(collection.id, collectionContainer, collectionWrapper);
+    });
+
+    collectionWrapper.appendChild(deleteCollectionButton);
+
     const imageContainer = document.createElement('div');
     imageContainer.className = 'grid sm:grid-cols-2 lg:grid-cols-3 gap-3';
     collectionWrapper.appendChild(imageContainer);
@@ -109,13 +121,19 @@ async function createCollection (name) {
 }
 
 async function createPhoto (collectionId, url, imageContainer) {
-    try {
-        const res = await fetch(`/api/collections/${collectionId}/photos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
-
+    fetch(`/api/collections/${collectionId}/photos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) }).then(async (res) => {
         paintPhoto(await res.json(), imageContainer);
-    } catch {
+    }).catch(() => {
         showError();
-    }
+    });
+}
+
+async function deleteCollection (collectionId, collectionContainer, collectionWrapper) {
+    fetch(`/api/collections/${collectionId}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }).then((res) => {
+        collectionContainer.removeChild(collectionWrapper);
+    }).catch(() => {
+        showError();
+    });
 }
 
 function showError (message) {
