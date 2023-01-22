@@ -46,11 +46,23 @@ describe('Test collections and photos', () => {
 
     test('GET /collections/id/photos/id succeeds in fetching a single photo', async () => {
         return request(app)
-            .get('/api/collections/test/photos/test')
+            .get('/api/photos/test')
             .expect('Content-Type', /json/)
             .expect(200)
             .then((res) => {
                 expect(res.body.id).toBe('test');
+            });
+    });
+
+    test('PUT /photos/id succeeds in updating a photo', async () => {
+        return request(app)
+            .put('/api/photos/test')
+            .send({ url: 'newurl', collectionId: 'test' })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body.url).toBe('newurl');
+                expect(res.body.collectionId).toBe('test');
             });
     });
 
@@ -62,6 +74,18 @@ describe('Test collections and photos', () => {
             .then((res) => {
                 expect(res.body.name).toBe('Test');
                 expect(res.body.id).toBe('test');
+            });
+    });
+
+    test('PUT /collections/id succeeds in updating a collection', async () => {
+        return request(app)
+            .put('/api/collections/test')
+            .send({ name: 'jest' })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body.id).toBe('test');
+                expect(res.body.name).toBe('jest');
             });
     });
 

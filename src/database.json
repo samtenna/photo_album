@@ -1,6 +1,1 @@
-{"collections":[
-    {
-        "id": "collection_one",
-        "name": "One"
-    }
-],"photos":[]}
+{"collections":[{"id":"collection_one","name":"One"}],"photos":[{"id":"photo_one","collection_id":"collection_one","url":"newurl"}]}

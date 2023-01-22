@@ -28,7 +28,7 @@ app.get('/api/health', (_, res) => {
 app.get('/api/collections', async (_, res) => {
   try {
     const file = await fs.readFile(DB_PATH);
-    const data = await JSON.parse(file);
+    const data = JSON.parse(file);
     return res.json(data.collections);
   } catch (e) {
     console.log(`Error reading from database: ${e}`);
@@ -41,7 +41,7 @@ app.get('/api/collections/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const file = await fs.readFile(DB_PATH);
-    const data = await JSON.parse(file);
+    const data = JSON.parse(file);
 
     let collection;
     data.collections.forEach((c) => {
@@ -73,7 +73,7 @@ app.post('/api/collections/', async (req, res) => {
     };
 
     const file = await fs.readFile(DB_PATH);
-    const data = await JSON.parse(file);
+    const data = JSON.parse(file);
 
     data.collections.push(newCollection);
 
@@ -86,12 +86,41 @@ app.post('/api/collections/', async (req, res) => {
   }
 });
 
+// PUT update an existing collection
+app.put('/api/collections/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const newName = req.body.name;
+
+    const file = await fs.readFile(DB_PATH);
+    const data = JSON.parse(file);
+
+    let collection;
+    data.collections.forEach((c) => {
+      if (c.id === id) {
+        collection = c;
+        c.name = newName;
+      }
+    });
+
+    if (collection === undefined) {
+      return res.sendStatus(404);
+    }
+
+    await fs.writeFile(DB_PATH, JSON.stringify(data));
+    return res.json(collection);
+  } catch (e) {
+    console.log(`Error writing to database: ${e}`);
+    return res.sendStatus(500);
+  }
+});
+
 // DELETE delete an existing collection
 app.delete('/api/collections/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const file = await fs.readFile(DB_PATH);
-    const data = await JSON.parse(file);
+    const data = JSON.parse(file);
 
     let found = false;
     data.collections = data.collections.filter((collection) => {
@@ -128,7 +157,7 @@ app.post('/api/collections/:collectionId/photos', async (req, res) => {
     const collectionId = req.params.collectionId;
 
     const file = await fs.readFile(DB_PATH);
-    const data = await JSON.parse(file);
+    const data = JSON.parse(file);
 
     const photoId = req.body.id ?? uuidv4();
 
@@ -154,7 +183,7 @@ app.get('/api/collections/:collectionId/photos', async (req, res) => {
   try {
     const collectionId = req.params.collectionId;
     const file = await fs.readFile(DB_PATH);
-    const data = await JSON.parse(file);
+    const data = JSON.parse(file);
 
     data.photos = data.photos.filter((photo) => photo.collectionId === collectionId);
 
@@ -166,16 +195,15 @@ app.get('/api/collections/:collectionId/photos', async (req, res) => {
 });
 
 // GET fetch single photo
-app.get('/api/collections/:collectionId/photos/:photoId', async (req, res) => {
+app.get('/api/photos/:photoId', async (req, res) => {
   try {
-    const collectionId = req.params.collectionId;
     const photoId = req.params.photoId;
     const file = await fs.readFile(DB_PATH);
-    const data = await JSON.parse(file);
+    const data = JSON.parse(file);
 
     let photo;
     data.photos.forEach((p) => {
-      if (p.id === photoId && p.collectionId === collectionId) {
+      if (p.id === photoId) {
         photo = p;
       }
     });
@@ -187,6 +215,37 @@ app.get('/api/collections/:collectionId/photos/:photoId', async (req, res) => {
     return res.json(photo);
   } catch (e) {
     console.log(`Error reading from database: ${e}`);
+    return res.sendStatus(400);
+  }
+});
+
+// PUT update a photo
+app.put('/api/photos/:photoId', async (req, res) => {
+  try {
+    const photoId = req.params.photoId;
+    const newUrl = req.body.url;
+    const newCollectionId = req.body.collectionId;
+
+    const file = await fs.readFile(DB_PATH);
+    const data = JSON.parse(file);
+
+    let photo;
+    data.photos.forEach((p) => {
+      if (p.id === photoId) {
+        photo = p;
+        p.url = newUrl ?? p.url;
+        p.collectionId = newCollectionId ?? p.collectionId;
+      }
+    });
+
+    if (photo === undefined) {
+      return res.sendStatus(404);
+    }
+
+    await fs.writeFile(DB_PATH, JSON.stringify(data));
+    return res.json(photo);
+  } catch (e) {
+    console.log(`Error writing to database: ${e}`);
     return res.sendStatus(400);
   }
 });

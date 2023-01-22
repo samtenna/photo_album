@@ -1,6 +1,6 @@
 window.addEventListener('load', async () => {
     const collections = await loadCollections();
-    console.log(collections);
+    paintCollections(collections);
 });
 
 async function loadCollections () {
@@ -23,4 +23,15 @@ async function loadCollections () {
         console.log(`Error fetching data from server: ${e}`);
         // TODO: do some error handling in the UI.
     }
+}
+
+async function paintCollections (collections) {
+    // const collectionContainer = document.getElementById('collection-container');
+
+    collections.forEach((collection) => {
+        const collectionWrapper = document.createElement('div');
+        collectionWrapper.className = 'flex flex-col gap-3';
+        const title = document.createElement('h3');
+        title.className = 'text-3xl';
+    });
 }
