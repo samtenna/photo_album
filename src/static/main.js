@@ -4,29 +4,6 @@ window.addEventListener('load', async () => {
     paintCollections(collections);
 });
 
-async function loadCollections () {
-    try {
-        // fetch collections
-        let collections = [];
-        const res = await fetch('/api/collections');
-        const data = await res.json();
-        collections = data;
-
-        collections = Promise.all(collections.map(async (collection) => {
-            // fetch photos for this collection
-            const res = await fetch(`/api/collections/${collection.id}/photos`);
-            const data = await res.json();
-            console.log(data);
-            return { ...collection, photos: data };
-        }));
-
-        return collections;
-    } catch (e) {
-        console.log(`Error fetching data from server: ${e}`);
-        // TODO: do some error handling in the UI.
-    }
-}
-
 function setupListeners () {
     const newCollectionForm = document.getElementById('new-collection-form');
     const newCollectionInput = document.getElementById('new-collection-input');
@@ -37,7 +14,16 @@ function setupListeners () {
         createCollection(newCollectionInput.value);
         newCollectionInput.value = '';
     });
+
+    const viewModal = document.getElementById('view-modal');
+    const viewModalCloseButton = document.getElementById('view-modal-close-button');
+
+    viewModalCloseButton.addEventListener('click', () => {
+        viewModal.classList.toggle('hidden');
+    });
 }
+
+// GENERATE UI
 
 async function paintCollections (collections) {
     collections.forEach((collection) => {
@@ -107,7 +93,35 @@ function paintPhoto (photo, imageContainer) {
     image.className = 'rounded';
     image.style = 'width: 100%; height: 100%; object-fit: cover;';
     image.src = photo.url;
+    image.id = photo.id;
     imageDiv.appendChild(image);
+}
+
+// function showViewModal ()
+
+// COMMUNICATE WITH SERVER
+
+async function loadCollections () {
+    try {
+        // fetch collections
+        let collections = [];
+        const res = await fetch('/api/collections');
+        const data = await res.json();
+        collections = data;
+
+        collections = Promise.all(collections.map(async (collection) => {
+            // fetch photos for this collection
+            const res = await fetch(`/api/collections/${collection.id}/photos`);
+            const data = await res.json();
+            console.log(data);
+            return { ...collection, photos: data };
+        }));
+
+        return collections;
+    } catch (e) {
+        console.log(`Error fetching data from server: ${e}`);
+        // TODO: do some error handling in the UI.
+    }
 }
 
 async function createCollection (name) {
@@ -135,6 +149,8 @@ async function deleteCollection (collectionId, collectionContainer, collectionWr
         showError();
     });
 }
+
+// COMMUNICATE WITH USER
 
 function showError (message) {
     const errorToast = document.getElementById('error-toast');
