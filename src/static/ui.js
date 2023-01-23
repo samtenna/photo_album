@@ -1,4 +1,4 @@
-import { deleteCollection, createCollection, createPhoto } from './requests.js';
+import { deleteCollection, createCollection, createPhoto, loadPhoto } from './requests.js';
 
 export async function paintCollections (collections) {
     collections.forEach((collection) => {
@@ -16,15 +16,27 @@ export function paintCollection (collection) {
     title.textContent = collection.name;
     collectionWrapper.appendChild(title);
 
-    const newPhotoInput = document.createElement('input');
-    newPhotoInput.className = 'text-xl border-2 border-green-200 rounded px-4 py-2';
-    newPhotoInput.placeholder = 'https://www.example.com/image';
-    collectionWrapper.appendChild(newPhotoInput);
+    const newPhotoForm = document.createElement('form');
+    newPhotoForm.action = `/api/collections/${collection.id}`;
+    newPhotoForm.method = 'POST';
+    newPhotoForm.enctype = 'multipart/form-data';
+    collectionWrapper.appendChild(newPhotoForm);
+
+    const newPhotoFileInput = document.createElement('input');
+    newPhotoFileInput.type = 'file';
+    newPhotoFileInput.name = 'image';
+    newPhotoForm.appendChild(newPhotoFileInput);
+
+    const newPhotoDescriptionInput = document.createElement('input');
+    newPhotoDescriptionInput.className = 'text-xl border-2 border-green-200 rounded px-4 py-2';
+    newPhotoDescriptionInput.placeholder = 'Description';
+    newPhotoForm.appendChild(newPhotoDescriptionInput);
 
     const newPhotoButton = document.createElement('button');
     newPhotoButton.className = 'bg-green-500 text-white text-xl px-4 py-2 rounded';
-    newPhotoButton.textContent = 'New Photo';
-    collectionWrapper.appendChild(newPhotoButton);
+    newPhotoButton.textContent = 'Upload Photo';
+    newPhotoButton.type = 'submit';
+    newPhotoForm.appendChild(newPhotoButton);
 
     const deleteCollectionButton = document.createElement('button');
     deleteCollectionButton.className = 'bg-red-500 text-white text-xl px-4 py-2 rounded';
@@ -45,8 +57,9 @@ export function paintCollection (collection) {
     newPhotoButton.addEventListener('click', (e) => {
         e.preventDefault();
 
-        createPhoto(collection.id, newPhotoInput.value, imageContainer);
-        newPhotoInput.value = '';
+        createPhoto(collection.id, newPhotoDescriptionInput.value, newPhotoFileInput.files[0], imageContainer);
+        newPhotoDescriptionInput.value = '';
+        newPhotoFileInput.value = '';
     });
 
     // photos
@@ -67,9 +80,13 @@ export function paintPhoto (photo, imageContainer) {
     const image = document.createElement('img');
     image.className = 'rounded';
     image.style = 'width: 100%; height: 100%; object-fit: cover;';
-    image.src = photo.url;
+    image.src = `/static/images/${photo.id}.jpg`;
     image.id = photo.id;
     imageDiv.appendChild(image);
+
+    image.addEventListener('click', async () => {
+        await showViewModal(photo.id);
+    });
 }
 
 export function showError (message) {
@@ -96,6 +113,16 @@ export function setupListeners () {
     const viewModalCloseButton = document.getElementById('view-modal-close-button');
 
     viewModalCloseButton.addEventListener('click', () => {
-        viewModal.classList.toggle('hidden');
+        viewModal.classList.add('hidden');
+    });
+}
+
+export function showViewModal (photoId) {
+    loadPhoto(photoId).then(({ description }) => {
+        const viewModal = document.getElementById('view-modal');
+        const viewModalImage = document.getElementById('view-modal-image');
+
+        viewModalImage.src = `/static/images/${photoId}.jpg`;
+        viewModal.classList.remove('hidden');
     });
 }

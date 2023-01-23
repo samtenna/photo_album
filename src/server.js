@@ -1,14 +1,15 @@
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-const fs = require('fs').promises;
-
 const express = require('express');
+const fileUpload = require('express-fileupload');
+const fs = require('fs').promises;
 
 const app = express();
 
 const DB_PATH = path.join(__dirname, './database.json');
 
 app.use(express.json());
+app.use(fileUpload());
 
 app.get('/', (_, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
@@ -64,7 +65,6 @@ app.get('/api/collections/:id', async (req, res) => {
 // POST create a new collection
 app.post('/api/collections/', async (req, res) => {
   try {
-    console.log(req.body);
     const name = req.body.name;
     const id = req.body.id ?? uuidv4();
 
@@ -151,21 +151,40 @@ app.delete('/api/collections/:id', async (req, res) => {
 
 // Images
 
+// POST upload an image for a photo
+app.post('/api/photos/:id/upload', async (req, res) => {
+  try {
+    const photoId = req.params.id;
+    const { image } = req.files;
+
+    // if no image submitted, return
+    if (!image) {
+      return res.sendStatus(400);
+    }
+
+    // move image to static folder
+    image.mv(path.join(__dirname, `/static/images/${photoId}.jpg`));
+    return res.sendStatus(200);
+  } catch (e) {
+    console.log(`Error uploading file: ${e}`);
+    return res.sendStatus(400);
+  }
+});
+
 // POST create a new photo
 app.post('/api/collections/:collectionId/photos', async (req, res) => {
   try {
-    const url = req.body.url;
     const collectionId = req.params.collectionId;
+    const description = req.body.description;
+    const photoId = req.body.id ?? uuidv4();
 
     const file = await fs.readFile(DB_PATH);
     const data = JSON.parse(file);
 
-    const photoId = req.body.id ?? uuidv4();
-
     const newPhoto = {
       id: photoId,
       collectionId,
-      url
+      description
     };
 
     data.photos.push(newPhoto);
@@ -224,7 +243,7 @@ app.get('/api/photos/:photoId', async (req, res) => {
 app.put('/api/photos/:photoId', async (req, res) => {
   try {
     const photoId = req.params.photoId;
-    const newUrl = req.body.url;
+    const newDescription = req.body.description;
     const newCollectionId = req.body.collectionId;
 
     const file = await fs.readFile(DB_PATH);
@@ -234,7 +253,7 @@ app.put('/api/photos/:photoId', async (req, res) => {
     data.photos.forEach((p) => {
       if (p.id === photoId) {
         photo = p;
-        p.url = newUrl ?? p.url;
+        p.description = newDescription ?? p.description;
         p.collectionId = newCollectionId ?? p.collectionId;
       }
     });

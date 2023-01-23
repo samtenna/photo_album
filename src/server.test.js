@@ -26,10 +26,10 @@ describe('Test collections and photos', () => {
             .expect(200);
     });
 
-    test('POST /collections/id/photos succeeds in creating a new photo', async () => {
+    test('POST /collections/id/photos succeeds in creating image', async () => {
         return request(app)
             .post('/api/collections/test/photos')
-            .send({ url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba', id: 'test' })
+            .send({ id: 'test', description: 'test' })
             .expect('Content-Type', /json/)
             .expect(200);
     });
@@ -57,18 +57,18 @@ describe('Test collections and photos', () => {
     test('PUT /photos/id succeeds in updating a photo', async () => {
         return request(app)
             .put('/api/photos/test')
-            .send({ url: 'newurl', collectionId: 'test' })
+            .send({ description: 'newdescription', collectionId: 'test' })
             .expect('Content-Type', /json/)
             .expect(200)
             .then((res) => {
-                expect(res.body.url).toBe('newurl');
+                expect(res.body.description).toBe('newdescription');
                 expect(res.body.collectionId).toBe('test');
             });
     });
 
     test('DELETE /photos/id succeeds in deleting a photo', async () => {
         return request(app)
-            .put('/api/photos/test')
+            .delete('/api/photos/test')
             .expect(200);
     });
 
