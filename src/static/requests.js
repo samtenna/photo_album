@@ -1,4 +1,4 @@
-import { paintCollection, showError } from './ui.js';
+import { paintCollection, paintPhoto, showError } from './ui.js';
 
 export async function loadCollections () {
     try {
@@ -41,7 +41,9 @@ export function createPhoto (collectionId, description, file, imageContainer) {
             const photo = await res.json();
             const formData = new window.FormData();
             formData.append('image', file);
-            fetch(`/api/photos/${photo.id}/upload`, { method: 'POST', body: formData }).catch(() => showError());
+            fetch(`/api/photos/${photo.id}/upload`, { method: 'POST', body: formData }).then(() => {
+                paintPhoto(photo, imageContainer);
+            }).catch(() => showError());
         }).catch(() => showError());
 }
 

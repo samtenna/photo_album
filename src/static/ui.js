@@ -121,7 +121,9 @@ export function showViewModal (photoId) {
     loadPhoto(photoId).then(({ description }) => {
         const viewModal = document.getElementById('view-modal');
         const viewModalImage = document.getElementById('view-modal-image');
+        const viewModalLabel = document.getElementById('view-modal-label');
 
+        viewModalLabel.textContent = description;
         viewModalImage.src = `/static/images/${photoId}.jpg`;
         viewModal.classList.remove('hidden');
     });
