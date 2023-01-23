@@ -48,9 +48,19 @@ export function createPhoto (collectionId, description, file, imageContainer) {
 }
 
 export function deleteCollection (collectionId, collectionContainer, collectionWrapper) {
-    fetch(`/api/collections/${collectionId}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }).then((res) => {
+    fetch(`/api/collections/${collectionId}`, { method: 'DELETE' })
+        .then((res) => {
         collectionContainer.removeChild(collectionWrapper);
-    }).catch(() => {
-        showError();
-    });
+    }).catch(() => showError());
+}
+
+export function deletePhoto (photoId) {
+    fetch(`/api/photos/${photoId}`, { method: 'DELETE' })
+        .then(() => {
+            // remove image from collection in ui
+            const img = document.getElementById(photoId);
+            const imgDiv = img.parentElement;
+            imgDiv.parentElement.removeChild(imgDiv);
+        })
+        .catch(() => showError());
 }

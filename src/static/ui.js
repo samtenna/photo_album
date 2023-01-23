@@ -1,4 +1,4 @@
-import { deleteCollection, createCollection, createPhoto, loadPhoto } from './requests.js';
+import { deleteCollection, deletePhoto, createCollection, createPhoto, loadPhoto } from './requests.js';
 
 export async function paintCollections (collections) {
     collections.forEach((collection) => {
@@ -109,11 +109,10 @@ export function setupListeners () {
         newCollectionInput.value = '';
     });
 
-    const viewModal = document.getElementById('view-modal');
     const viewModalCloseButton = document.getElementById('view-modal-close-button');
 
     viewModalCloseButton.addEventListener('click', () => {
-        viewModal.classList.add('hidden');
+        closeViewModal();
     });
 }
 
@@ -126,5 +125,20 @@ export function showViewModal (photoId) {
         viewModalLabel.textContent = description;
         viewModalImage.src = `/static/images/${photoId}.jpg`;
         viewModal.classList.remove('hidden');
+
+        // reset event listeners for delete and edit
+        // clone the node to remove all previous event listeners
+        const viewModalDeleteButton = document.getElementById('view-modal-delete-button');
+        const newDeleteButton = viewModalDeleteButton.cloneNode(true);
+        viewModalDeleteButton.parentNode.replaceChild(newDeleteButton, viewModalDeleteButton);
+        newDeleteButton.addEventListener('click', () => {
+            deletePhoto(photoId);
+            closeViewModal();
+        });
     });
+}
+
+export function closeViewModal () {
+    const viewModal = document.getElementById('view-modal');
+    viewModal.classList.add('hidden');
 }

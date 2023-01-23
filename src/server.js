@@ -279,7 +279,7 @@ app.delete('/api/photos/:photoId', async (req, res) => {
     const data = JSON.parse(file);
 
     let found = false;
-    data.photos.filter((p) => {
+    data.photos = data.photos.filter((p) => {
       if (p.id === photoId) {
         found = true;
         return false;
