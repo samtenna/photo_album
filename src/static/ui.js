@@ -28,7 +28,7 @@ export function paintCollection (collection) {
     });
 
     const actionsContainer = document.createElement('div');
-    actionsContainer.className = 'flex flex-col md:flex-row gap-3 justify-between';
+    actionsContainer.className = 'flex flex-col lg:flex-row gap-3 justify-between';
     collectionWrapper.appendChild(actionsContainer);
 
     const buttonsContainer = document.createElement('div');
