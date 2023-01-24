@@ -1,4 +1,4 @@
-import { deleteCollection, deletePhoto, createCollection, createPhoto, loadPhoto } from './requests.js';
+import { deleteCollection, deletePhoto, createCollection, createPhoto, loadPhoto, editPhoto, editCollection } from './requests.js';
 
 export async function paintCollections (collections) {
     collections.forEach((collection) => {
@@ -12,15 +12,31 @@ export function paintCollection (collection) {
     collectionWrapper.className = 'flex flex-col gap-3';
 
     const title = document.createElement('h3');
-    title.className = 'text-3xl';
+    title.className = 'text-4xl font-semibold';
     title.textContent = collection.name;
     collectionWrapper.appendChild(title);
+
+    const titleInput = document.createElement('input');
+    titleInput.className = 'text-gray-50 bg-gray-900 text-4xl font-semibold hidden';
+    titleInput.value = collection.name;
+    collectionWrapper.appendChild(titleInput);
+
+    titleInput.addEventListener('focusout', () => {
+        editCollection(collection.id, titleInput.value, title);
+        title.classList.remove('hidden');
+        titleInput.classList.add('hidden');
+    });
+
+    const actionsContainer = document.createElement('div');
+    actionsContainer.className = 'flex flex-col md:flex-row gap-3';
+    collectionWrapper.appendChild(actionsContainer);
 
     const newPhotoForm = document.createElement('form');
     newPhotoForm.action = `/api/collections/${collection.id}`;
     newPhotoForm.method = 'POST';
     newPhotoForm.enctype = 'multipart/form-data';
-    collectionWrapper.appendChild(newPhotoForm);
+    newPhotoForm.className = 'flex flex-col md:flex-row gap-3';
+    actionsContainer.appendChild(newPhotoForm);
 
     const newPhotoFileInput = document.createElement('input');
     newPhotoFileInput.type = 'file';
@@ -40,7 +56,8 @@ export function paintCollection (collection) {
 
     const deleteCollectionButton = document.createElement('button');
     deleteCollectionButton.className = 'bg-red-500 text-white text-xl px-4 py-2 rounded';
-    deleteCollectionButton.textContent = 'Delete Collection';
+    deleteCollectionButton.textContent = 'Delete';
+    actionsContainer.appendChild(deleteCollectionButton);
 
     deleteCollectionButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -48,7 +65,16 @@ export function paintCollection (collection) {
         deleteCollection(collection.id, collectionContainer, collectionWrapper);
     });
 
-    collectionWrapper.appendChild(deleteCollectionButton);
+    const editCollectionButton = document.createElement('button');
+    editCollectionButton.className = 'bg-blue-500 text-white text-xl px-4 py-2 rounded';
+    editCollectionButton.textContent = 'Rename';
+    actionsContainer.appendChild(editCollectionButton);
+
+    editCollectionButton.addEventListener('click', () => {
+        title.classList.add('hidden');
+        titleInput.classList.remove('hidden');
+        titleInput.focus();
+    });
 
     const imageContainer = document.createElement('div');
     imageContainer.className = 'grid sm:grid-cols-2 lg:grid-cols-3 gap-3';
@@ -110,9 +136,18 @@ export function setupListeners () {
     });
 
     const viewModalCloseButton = document.getElementById('view-modal-close-button');
-
     viewModalCloseButton.addEventListener('click', () => {
         closeViewModal();
+        document.getElementById('view-modal-label').classList.remove('hidden');
+        document.getElementById('view-modal-description-input').classList.add('hidden');
+    });
+
+    const viewModalEditButton = document.getElementById('view-modal-edit-button');
+    viewModalEditButton.addEventListener('click', () => {
+        document.getElementById('view-modal-label').classList.add('hidden');
+        const viewModalDescriptionInput = document.getElementById('view-modal-description-input');
+        viewModalDescriptionInput.classList.remove('hidden');
+        viewModalDescriptionInput.focus();
     });
 }
 
@@ -134,6 +169,17 @@ export function showViewModal (photoId) {
         newDeleteButton.addEventListener('click', () => {
             deletePhoto(photoId);
             closeViewModal();
+        });
+
+        const viewModalDescriptionInput = document.getElementById('view-modal-description-input');
+        const newDescriptionInput = viewModalDescriptionInput.cloneNode(true);
+        newDescriptionInput.value = description;
+
+        viewModalDescriptionInput.parentNode.replaceChild(newDescriptionInput, viewModalDescriptionInput);
+        newDescriptionInput.addEventListener('focusout', () => {
+            newDescriptionInput.classList.add('hidden');
+            viewModalLabel.classList.remove('hidden');
+            editPhoto(photoId, newDescriptionInput.value, viewModalLabel);
         });
     });
 }

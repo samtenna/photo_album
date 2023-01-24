@@ -64,3 +64,22 @@ export function deletePhoto (photoId) {
         })
         .catch(() => showError());
 }
+
+export function editPhoto (photoId, newDescription, label) {
+    fetch(`/api/photos/${photoId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ description: newDescription }) })
+        .then(() => {
+            // update label
+            label.textContent = newDescription;
+        })
+        .catch(() => {
+            showError();
+        });
+}
+
+export function editCollection (collectionId, newName, label) {
+    fetch(`/api/collections/${collectionId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName }) })
+    .then(() => {
+        label.textContent = newName;
+    })
+    .catch(() => showError());
+}
