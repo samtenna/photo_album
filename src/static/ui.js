@@ -72,6 +72,11 @@ export function paintCollection (collection) {
     newPhotoForm.className = 'flex flex-col items-center justify-center md:flex-row gap-3';
     actionsContainer.appendChild(newPhotoForm);
 
+    const newPhotoLabel = document.createElement('h3');
+    newPhotoLabel.textContent = 'New Photo';
+    newPhotoLabel.className = 'text-2xl font-semibold';
+    newPhotoForm.appendChild(newPhotoLabel);
+
     const newPhotoFileInput = document.createElement('input');
     newPhotoFileInput.type = 'file';
     newPhotoFileInput.name = 'image';
