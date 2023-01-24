@@ -5,11 +5,11 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
     
     <title>Assignment</title>
   </head>
-  <body>
+  <body class="bg-gray-800 text-gray-50">
     <!-- toast component from https://flowbite.com/docs/components/toast/ -->
     <div id="toast-success" class="invisible transition fixed left-1/2 transform -translate-x-1/2 bottom-4 flex items-center w-full max-w-xs p-4 mb-4 rounded-lg shadow text-gray-400 bg-gray-800" role="alert">
       <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg bg-green-800 text-green-200">
@@ -42,23 +42,23 @@
           <!-- Modal header -->
           <div class="flex flex-col gap-2 items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <div class="flex items-center justify-between">
-              <h3 id="view-modal-label" class="flex grow text-xl font-semibold text-gray-900 text-white"></h3>
-              <input id="view-modal-description-input" type="text" class="hidden border-2 border-gray-50 rounded text-xl text-gray-900">
-              <button id="view-modal-close-button" type="button" class="text-gray-400 bg-transparent rounded-lg text-sm p-1.5 inline-flex items-center hover:bg-gray-600 hover:text-white" data-modal-hide="defaultModal">
+              <h3 id="view-modal-label" class="flex grow text-xl font-semibold text-gray-900 text-white">Image description.</h3>
+              <input id="view-modal-description-input" type="text" class="hidden bg-gray-700 focus:outline-none text-gray-100 font-semibold rounded text-xl text-gray-900">
+              <button id="view-modal-close-button" type="button" class="text-gray-400 bg-transparent rounded-lg text-sm p-1.5 inline-flex items-center hover:bg-gray-600 hover:text-white transition" data-modal-hide="defaultModal">
                   <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                   <span class="sr-only">Close modal</span>
               </button>
             </div>
 
             <div class="flex gap-3">
-              <button id="view-modal-edit-button" type="button" class="text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white" data-modal-hide="defaultModal">
+              <button id="view-modal-edit-button" type="button" class="transition text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white" data-modal-hide="defaultModal">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                   </svg>
                   <span class="sr-only">Edit description</span>
               </button>
 
-              <button id="view-modal-delete-button" type="button" class="text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white" data-modal-hide="defaultModal">
+              <button id="view-modal-delete-button" type="button" class="transition text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-red-400" data-modal-hide="defaultModal">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                   </svg>
@@ -67,14 +67,12 @@
             </div>
           </div>
           <!-- Modal body -->
-          <img id="view-modal-image" style="object-fit: cover; max-height: 75vh;" src="https://picsum.photos/1024" alt="" srcset="">
+          <img id="view-modal-image" style="object-fit: cover; max-height: 75vh;" src="https://picsum.photos/1024" alt="">
         </div>
       </div>
     </div>
 
-    <h1 class="text-center text-6xl">Photo Album</h1>
-    
-    <div class="flex flex-col p-6 gap-3" id="collection-container">
+    <div class="flex flex-col sm:p-3 md:p-6 gap-3" id="collection-container">
       <!-- <div class="flex flex-col gap-3">
         <h3 class="text-3xl">Collection Name</h3>
         
@@ -93,9 +91,14 @@
     </div>
 
     <div class="flex items-center px-4 py-4">
-      <form id="new-collection-form" class="flex flex-col md:flex-row gap-3" action="">
-        <input id="new-collection-input" type="text" class="text-xl border-2 border-green-200 rounded px-4 py-2" placeholder="Collection Name">
-        <button class="bg-green-500 text-white text-xl px-4 py-2 rounded">New Collection</button>
+      <form id="new-collection-form" class="flex flex-col items-center md:flex-row gap-3" action="POST">
+        <input id="new-collection-input" type="text" class="text-xl border-2 border-gray-600 focus:outline-none transition focus:bg-gray-50 focus:text-black bg-gray-800 rounded-lg px-4 py-2" placeholder="Collection name">
+
+        <button class="transition text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </button>
       </form>
     </div>
     

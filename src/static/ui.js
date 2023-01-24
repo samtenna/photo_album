@@ -17,7 +17,7 @@ export function paintCollection (collection) {
     collectionWrapper.appendChild(title);
 
     const titleInput = document.createElement('input');
-    titleInput.className = 'text-gray-50 bg-gray-900 text-4xl font-semibold hidden';
+    titleInput.className = 'text-gray-50 bg-gray-800 text-4xl font-semibold hidden focus:outline-none';
     titleInput.value = collection.name;
     collectionWrapper.appendChild(titleInput);
 
@@ -28,14 +28,48 @@ export function paintCollection (collection) {
     });
 
     const actionsContainer = document.createElement('div');
-    actionsContainer.className = 'flex flex-col md:flex-row gap-3';
+    actionsContainer.className = 'flex flex-col md:flex-row gap-3 justify-between';
     collectionWrapper.appendChild(actionsContainer);
+
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'flex flex-row items-center justify-around gap-3';
+    actionsContainer.appendChild(buttonsContainer);
+
+    const editCollectionButton = document.createElement('button');
+    editCollectionButton.className = 'text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white transition';
+    // editCollectionButton.textContent = 'Rename';
+    editCollectionButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+    </svg>
+    `;
+    buttonsContainer.appendChild(editCollectionButton);
+
+    editCollectionButton.addEventListener('click', () => {
+        title.classList.add('hidden');
+        titleInput.classList.remove('hidden');
+        titleInput.focus();
+    });
+
+    const deleteCollectionButton = document.createElement('button');
+    deleteCollectionButton.className = 'text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-red-400 transition';
+    // deleteCollectionButton.textContent = 'Delete';
+    deleteCollectionButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+    </svg>
+    `;
+    buttonsContainer.appendChild(deleteCollectionButton);
+
+    deleteCollectionButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        deleteCollection(collection.id, collectionContainer, collectionWrapper);
+    });
 
     const newPhotoForm = document.createElement('form');
     newPhotoForm.action = `/api/collections/${collection.id}`;
     newPhotoForm.method = 'POST';
     newPhotoForm.enctype = 'multipart/form-data';
-    newPhotoForm.className = 'flex flex-col md:flex-row gap-3';
+    newPhotoForm.className = 'flex flex-col items-center justify-center md:flex-row gap-3';
     actionsContainer.appendChild(newPhotoForm);
 
     const newPhotoFileInput = document.createElement('input');
@@ -44,37 +78,20 @@ export function paintCollection (collection) {
     newPhotoForm.appendChild(newPhotoFileInput);
 
     const newPhotoDescriptionInput = document.createElement('input');
-    newPhotoDescriptionInput.className = 'text-xl border-2 border-green-200 rounded px-4 py-2';
-    newPhotoDescriptionInput.placeholder = 'Description';
+    newPhotoDescriptionInput.className = 'text-xl border-2 border-gray-600 focus:outline-none transition focus:bg-gray-50 focus:text-black bg-gray-800 rounded-lg px-4 py-2';
+    newPhotoDescriptionInput.placeholder = 'Photo description';
     newPhotoForm.appendChild(newPhotoDescriptionInput);
 
     const newPhotoButton = document.createElement('button');
-    newPhotoButton.className = 'bg-green-500 text-white text-xl px-4 py-2 rounded';
-    newPhotoButton.textContent = 'Upload Photo';
+    newPhotoButton.className = 'text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white transition';
+    // newPhotoButton.textContent = 'Upload Photo';
+    newPhotoButton.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+    </svg>
+    `;
     newPhotoButton.type = 'submit';
     newPhotoForm.appendChild(newPhotoButton);
-
-    const deleteCollectionButton = document.createElement('button');
-    deleteCollectionButton.className = 'bg-red-500 text-white text-xl px-4 py-2 rounded';
-    deleteCollectionButton.textContent = 'Delete';
-    actionsContainer.appendChild(deleteCollectionButton);
-
-    deleteCollectionButton.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        deleteCollection(collection.id, collectionContainer, collectionWrapper);
-    });
-
-    const editCollectionButton = document.createElement('button');
-    editCollectionButton.className = 'bg-blue-500 text-white text-xl px-4 py-2 rounded';
-    editCollectionButton.textContent = 'Rename';
-    actionsContainer.appendChild(editCollectionButton);
-
-    editCollectionButton.addEventListener('click', () => {
-        title.classList.add('hidden');
-        titleInput.classList.remove('hidden');
-        titleInput.focus();
-    });
 
     const imageContainer = document.createElement('div');
     imageContainer.className = 'grid sm:grid-cols-2 lg:grid-cols-3 gap-3';
@@ -100,14 +117,15 @@ export function paintCollection (collection) {
 
 export function paintPhoto (photo, imageContainer) {
     const imageDiv = document.createElement('div');
-    imageDiv.className = 'transition aspect-square hover:bg-gray-200 hover:cursor-pointer hover:shadow-md bg-gray-100 p-2 rounded';
+    imageDiv.className = 'transition aspect-square hover:bg-gray-200 hover:cursor-pointer hover:shadow-md p-2 rounded-xl';
     imageContainer.appendChild(imageDiv);
 
     const image = document.createElement('img');
-    image.className = 'rounded';
+    image.className = 'rounded-xl';
     image.style = 'width: 100%; height: 100%; object-fit: cover;';
     image.src = `/static/images/${photo.id}.jpg`;
     image.id = photo.id;
+    image.alt = photo.description;
     imageDiv.appendChild(image);
 
     image.addEventListener('click', async () => {
@@ -115,7 +133,7 @@ export function paintPhoto (photo, imageContainer) {
     });
 }
 
-export function showError (message) {
+export function showError () {
     const errorToast = document.getElementById('error-toast');
     errorToast.classList.remove('invisible');
 
@@ -159,6 +177,7 @@ export function showViewModal (photoId) {
 
         viewModalLabel.textContent = description;
         viewModalImage.src = `/static/images/${photoId}.jpg`;
+        viewModalImage.alt = description;
         viewModal.classList.remove('hidden');
 
         // reset event listeners for delete and edit
