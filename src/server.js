@@ -51,7 +51,7 @@ app.get('/api/collections/:id', async (req, res) => {
       }
     });
 
-    if (collection === null) {
+    if (collection === undefined) {
       return res.sendStatus(404);
     }
 
@@ -67,6 +67,10 @@ app.post('/api/collections/', async (req, res) => {
   try {
     const name = req.body.name;
     const id = req.body.id ?? uuidv4();
+
+    if (name === undefined) {
+      return res.sendStatus(400);
+    }
 
     const newCollection = {
       id,
@@ -92,6 +96,10 @@ app.put('/api/collections/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const newName = req.body.name;
+
+    if (newName === undefined) {
+      return res.sendStatus(400);
+    }
 
     const file = await fs.readFile(DB_PATH);
     const data = JSON.parse(file);
@@ -178,8 +186,23 @@ app.post('/api/collections/:collectionId/photos', async (req, res) => {
     const description = req.body.description;
     const photoId = req.body.id ?? uuidv4();
 
+    if (description === undefined) {
+      return res.sendStatus(400);
+    }
+
     const file = await fs.readFile(DB_PATH);
     const data = JSON.parse(file);
+
+    // confirm there exists a collection with the id
+    let found = false;
+    data.collections.forEach((c) => {
+      if (c.id === collectionId) {
+        found = true;
+      }
+    });
+    if (!found) {
+      return res.sendStatus(404);
+    }
 
     const newPhoto = {
       id: photoId,
@@ -204,6 +227,17 @@ app.get('/api/collections/:collectionId/photos', async (req, res) => {
     const collectionId = req.params.collectionId;
     const file = await fs.readFile(DB_PATH);
     const data = JSON.parse(file);
+
+    // confirm there exists a collection with the id
+    let found = false;
+    data.collections.forEach((c) => {
+      if (c.id === collectionId) {
+        found = true;
+      }
+    });
+    if (!found) {
+      return res.sendStatus(404);
+    }
 
     data.photos = data.photos.filter((photo) => photo.collectionId === collectionId);
 
@@ -245,6 +279,10 @@ app.put('/api/photos/:photoId', async (req, res) => {
     const photoId = req.params.photoId;
     const newDescription = req.body.description;
     const newCollectionId = req.body.collectionId;
+
+    if (newDescription === undefined || newCollectionId === undefined) {
+      return res.sendStatus(400);
+    }
 
     const file = await fs.readFile(DB_PATH);
     const data = JSON.parse(file);

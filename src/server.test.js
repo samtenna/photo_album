@@ -26,12 +26,31 @@ describe('Test collections and photos', () => {
             .expect(200);
     });
 
+    test('POST /collections fails with bad input', async () => {
+        return request(app)
+            .post('/api/collections')
+            .expect(400);
+    });
+
     test('POST /collections/id/photos succeeds in creating image', async () => {
         return request(app)
             .post('/api/collections/test/photos')
             .send({ id: 'test', description: 'test' })
             .expect('Content-Type', /json/)
             .expect(200);
+    });
+
+    test('POST /collections/id/photos fails with bad id', async () => {
+        return request(app)
+            .post('/api/collections/blahblahblah/photos')
+            .send({ id: 'test', description: 'test' })
+            .expect(404);
+    });
+
+    test('POST /collections/id/photos fails with bad input', async () => {
+        return request(app)
+            .post('/api/collections/test/photos')
+            .expect(400);
     });
 
     test('GET /collections/id/photos succeeds in fetching all photos', async () => {
@@ -44,7 +63,13 @@ describe('Test collections and photos', () => {
             });
     });
 
-    test('GET /collections/id/photos/id succeeds in fetching a single photo', async () => {
+    test('GET /collections/id/photos fails with bad id', async () => {
+        return request(app)
+            .get('/api/collections/blahblahblah/photos')
+            .expect(404);
+    });
+
+    test('GET /photos/id succeeds in fetching a single photo', async () => {
         return request(app)
             .get('/api/photos/test')
             .expect('Content-Type', /json/)
@@ -52,6 +77,12 @@ describe('Test collections and photos', () => {
             .then((res) => {
                 expect(res.body.id).toBe('test');
             });
+    });
+
+    test('GET /photos/id fails with a bad id', async () => {
+        return request(app)
+            .get('/api/photos/blahblahblah')
+            .expect(404);
     });
 
     test('PUT /photos/id succeeds in updating a photo', async () => {
@@ -66,10 +97,29 @@ describe('Test collections and photos', () => {
             });
     });
 
+    test('PUT /photos/id fails with bad id', async () => {
+        return request(app)
+            .put('/api/photos/blahblahblah')
+            .send({ description: 'newdescription', collectionId: 'test' })
+            .expect(404);
+    });
+
+    test('PUT /photos/id fails with bad input', async () => {
+        return request(app)
+            .put('/api/photos/test')
+            .expect(400);
+    });
+
     test('DELETE /photos/id succeeds in deleting a photo', async () => {
         return request(app)
             .delete('/api/photos/test')
             .expect(200);
+    });
+
+    test('DELETE /photos/id fails with bad id', async () => {
+        return request(app)
+            .delete('/api/photos/blahblahblah')
+            .expect(404);
     });
 
     test('GET /collections/id succeeds in selecting a single collection', async () => {
@@ -81,6 +131,12 @@ describe('Test collections and photos', () => {
                 expect(res.body.name).toBe('Test');
                 expect(res.body.id).toBe('test');
             });
+    });
+
+    test('GET /collections/id fails with bad id', async () => {
+        return request(app)
+            .get('/api/collections/blahblahblah')
+            .expect(404);
     });
 
     test('PUT /collections/id succeeds in updating a collection', async () => {
@@ -95,9 +151,28 @@ describe('Test collections and photos', () => {
             });
     });
 
-    test('DELETE /collections succeeds in deleting a collection', async () => {
+    test('PUT /collections/id fails with bad id', async () => {
+        return request(app)
+            .put('/api/collections/blahblahblah')
+            .send({ name: 'jest' })
+            .expect(404);
+    });
+
+    test('PUT /collections/id fails with bad input', async () => {
+        return request(app)
+            .put('/api/collections/test')
+            .expect(400);
+    });
+
+    test('DELETE /collections/id succeeds in deleting a collection', async () => {
         return request(app)
             .delete('/api/collections/test')
             .expect(200);
+    });
+
+    test('DELETE /collections/id fails with bad id', async () => {
+        return request(app)
+            .delete('/api/collections/blahblahblah')
+            .expect(404);
     });
 });
