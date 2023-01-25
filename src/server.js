@@ -19,10 +19,6 @@ app.use('/static', express.static(path.join(__dirname, '/static')));
 
 // API
 
-app.get('/api/health', (_, res) => {
-  return res.json({ alive: true });
-});
-
 // Collections
 
 // GET all existing collections

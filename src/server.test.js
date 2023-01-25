@@ -32,7 +32,7 @@ describe('Test collections and photos', () => {
             .expect(400);
     });
 
-    test('POST /collections/id/photos succeeds in creating image', async () => {
+    test('POST /collections/id/photos succeeds in creating a photo', async () => {
         return request(app)
             .post('/api/collections/test/photos')
             .send({ id: 'test', description: 'test' })
