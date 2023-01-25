@@ -276,7 +276,7 @@ app.put('/api/photos/:photoId', async (req, res) => {
     const newDescription = req.body.description;
     const newCollectionId = req.body.collectionId;
 
-    if (newDescription === undefined || newCollectionId === undefined) {
+    if (newDescription === undefined && newCollectionId === undefined) {
       return res.sendStatus(400);
     }
 
